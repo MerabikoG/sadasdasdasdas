@@ -55,206 +55,89 @@ function Footer() {
   );
 }
 
-// ── Home ──
+// ── Home (League Hub) ──
 function HomePage({ go }) {
-  const live = PD.FIXTURES.find(f => f.status === 'live');
-  const upcoming = PD.FIXTURES.filter(f => f.status === 'scheduled').slice(0, 4);
-  const recent = PD.FIXTURES.filter(f => f.status === 'finished').slice(-4).reverse();
-  const top5 = [...PD.STANDINGS].sort((a,b)=>b.pts-a.pts).slice(0,5);
-  const liveHome = live && PD.byId(live.home);
-  const liveAway = live && PD.byId(live.away);
+  const COMPS = [
+    {
+      id: 'regional', name: 'რეგიონული ლიგა', color: '#e8336d',
+      flat: ['ა ჯგუფი', 'ბ ჯგუფი', 'გ ჯგუფი'],
+    },
+    {
+      id: 'u19', name: '19-წლამდე ლიგა', color: '#f5a524', badge: 'U19',
+      tiers: [
+        { name: 'ოქროს ლიგა',    color: '#f5a524', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+        { name: 'ვერცხლის ლიგა', color: '#9ca3af', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+      ],
+    },
+    {
+      id: 'u17', name: '17-წლამდე ლიგა', color: '#2dd4a4', badge: 'U17',
+      tiers: [
+        { name: 'ოქროს ლიგა',    color: '#f5a524', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+        { name: 'ვერცხლის ლიგა', color: '#9ca3af', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+      ],
+    },
+    {
+      id: 'bronze', name: 'ბრინჯაოს ლიგა', color: '#cd7f32',
+      flat: ['ა ჯგუფი', 'ბ ჯგუფი', 'გ ჯგუფი', 'ზედა ჯგუფი', 'ქვედა ჯგუფი'],
+    },
+    {
+      id: 'u15', name: '15-წლამდე ლიგა', color: '#a855f7', badge: 'U15',
+      tiers: [
+        { name: 'ოქროს ლიგა',    color: '#f5a524', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+        { name: 'ვერცხლის ლიგა', color: '#9ca3af', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+        { name: 'ბრინჯაოს ლიგა', color: '#cd7f32', subs: ['ა ჯგუფი', 'ბ ჯგუფი', 'გ ჯგუფი', 'ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
+      ],
+    },
+  ];
 
-  const fmtDate = (d) => new Date(d).toLocaleDateString('ka-GE', { day:'numeric', month:'short' });
+  const Chev = () => (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+      <path d="m9 18 6-6-6-6"/>
+    </svg>
+  );
 
   return (
     <>
-      <section className="hero">
+      <section className="hub-hero">
         <div className="pub-container">
-          <div className="hero-inner">
-            <div>
-              <span className="pub-section-eyebrow">სეზონი 2025/26 · ტური 18</span>
-              <h1 className="hero-headline">
-                ერთი ლიგა.<br />
-                ათი გუნდი.<br />
-                <em>ერთი თასი.</em>
-              </h1>
-              <p className="hero-sub">
-                ყოველი მატჩი, ყოველი გოლი, ყოველი ემოცია. ეროვნული ლიგის ოფიციალური სახლი —
-                ცხრილები, განრიგი, ლაივი და ბილეთები ერთ ადგილას.
-              </p>
-              <div className="hero-cta">
-                <button className="pub-btn primary lg" onClick={()=>go('tickets')}>ბილეთის შეძენა</button>
-                <button className="pub-btn ghost lg" onClick={()=>go('match')}>ლაივი მატჩის ნახვა →</button>
-              </div>
-              <div className="hero-stats">
-                <div className="hero-stat">
-                  <div className="hero-stat-num">90</div>
-                  <div className="hero-stat-label">მატჩი სეზონში</div>
-                </div>
-                <div className="hero-stat">
-                  <div className="hero-stat-num">233</div>
-                  <div className="hero-stat-label">გატანილი გოლი</div>
-                </div>
-                <div className="hero-stat">
-                  <div className="hero-stat-num">428კ</div>
-                  <div className="hero-stat-label">სტადიონის დასწრება</div>
-                </div>
-              </div>
-            </div>
-
-            {live && (
-              <div className="featured-match" onClick={()=>go('match')} style={{cursor:'pointer'}}>
-                <div className="featured-tag">ლაივი ახლა · {live.minute}'</div>
-                <div className="featured-teams">
-                  <div className="featured-team">
-                    <PCrest team={liveHome} size="lg" />
-                    <h4>{liveHome.name}</h4>
-                  </div>
-                  <div className="featured-vs">
-                    <span>{live.hs}</span><span>:</span><span>{live.as}</span>
-                  </div>
-                  <div className="featured-team">
-                    <PCrest team={liveAway} size="lg" />
-                    <h4>{liveAway.name}</h4>
-                  </div>
-                </div>
-                <div className="featured-meta">
-                  <span>{live.stadium}</span>
-                  <span className="featured-min">მე-2 ტაიმი · {live.minute}'</span>
-                </div>
-              </div>
-            )}
-          </div>
+          <span className="pub-section-eyebrow">სეზონი 2025/26 · ყველა შეჯიბრება</span>
+          <h1 className="hub-title">ლიგები</h1>
         </div>
       </section>
 
-      <section className="pub-section tight">
-        <div className="pub-container">
-          <div className="pub-section-head">
-            <div>
-              <span className="pub-section-eyebrow">მე-18 ტური</span>
-              <h2 className="pub-section-title">მიმდინარე და დაგეგმილი მატჩები</h2>
-            </div>
-            <a className="pub-link" onClick={()=>go('match')}>ყველა მატჩი →</a>
-          </div>
-          <div className="matches-strip">
-            {[live, ...upcoming, ...recent].filter(Boolean).slice(0,8).map(f => {
-              const h = PD.byId(f.home), a = PD.byId(f.away);
-              const isLive = f.status === 'live';
-              const isDone = f.status === 'finished';
-              const homeWin = isDone && f.hs > f.as;
-              const awayWin = isDone && f.as > f.hs;
-              return (
-                <div key={f.id} className="match-card" onClick={()=>go('match')}>
-                  <div className="match-card-head">
-                    <span>ტური {f.round} · {fmtDate(f.date)}</span>
-                    {isLive ? <span className="live-pill">{f.minute}'</span> : <span>{isDone ? 'FT' : f.time}</span>}
-                  </div>
-                  <div className={`match-card-team ${homeWin?'winner':isDone?'':isLive?'winner':'scheduled'}`}>
-                    <span className="name"><PCrest team={h} size="sm" />{h.name}</span>
-                    <span className="score">{f.hs ?? '–'}</span>
-                  </div>
-                  <div className={`match-card-team ${awayWin?'winner':isDone?'':isLive?'winner':'scheduled'}`}>
-                    <span className="name"><PCrest team={a} size="sm" />{a.name}</span>
-                    <span className="score">{f.as ?? '–'}</span>
-                  </div>
-                  <div className="match-card-foot">
-                    <span>{f.stadium}</span>
-                    {isLive && <span style={{color:'var(--live)'}}>● ლაივი</span>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="pub-section">
-        <div className="pub-container">
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1.4fr', gap:32}} className="home-2col">
-            <div>
-              <div className="pub-section-head">
-                <div><span className="pub-section-eyebrow">ცხრილი</span>
-                <h2 className="pub-section-title" style={{fontSize:24}}>TOP 5</h2></div>
+      <div className="pub-container hub-body">
+        <div className="hub-grid">
+          {COMPS.map(comp => (
+            <div key={comp.id} className="hub-card" style={{'--cc': comp.color}}>
+              <div className="hub-card-head">
+                <span className="hub-card-name">{comp.name}</span>
+                {comp.badge && <span className="hub-age-badge">{comp.badge}</span>}
               </div>
-              <div className="standings-mini">
-                <table>
-                  <thead><tr><th></th><th>გუნდი</th><th className="num">მ</th><th className="num">±</th><th className="num">ქ</th></tr></thead>
-                  <tbody>
-                    {top5.map((s,i) => {
-                      const t = PD.byId(s.team);
-                      return (
-                        <tr key={s.team} onClick={()=>go('team', s.team)}>
-                          <td className="pos">{i+1}</td>
-                          <td><div className="team"><PCrest team={t} size="sm" />{t.name}</div></td>
-                          <td className="num">{s.p}</td>
-                          <td className="num" style={{color: s.gd>=0?'var(--success)':'var(--danger)'}}>{s.gd>=0?'+':''}{s.gd}</td>
-                          <td className="num" style={{fontSize:14}}>{s.pts}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <div className="hub-card-body">
+                {comp.flat && comp.flat.map(g => (
+                  <button key={g} className="hub-row" onClick={()=>{}}>
+                    <span>{g}</span><Chev />
+                  </button>
+                ))}
+                {comp.tiers && comp.tiers.map(tier => (
+                  <div key={tier.name} className="hub-tier-block">
+                    <button className="hub-tier-head" style={{color: tier.color}} onClick={()=>{}}>
+                      <span className="hub-tier-dot" style={{background: tier.color}} />
+                      <span>{tier.name}</span>
+                      <Chev />
+                    </button>
+                    {tier.subs.map(g => (
+                      <button key={g} className="hub-sub-row" onClick={()=>{}}>
+                        <span>{g}</span><Chev />
+                      </button>
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
-
-            <div>
-              <div className="pub-section-head">
-                <div><span className="pub-section-eyebrow">ბომბარდირები</span>
-                <h2 className="pub-section-title" style={{fontSize:24}}>ლიდერები</h2></div>
-                <a className="pub-link">ყველა →</a>
-              </div>
-              <div className="standings-mini">
-                <table>
-                  <thead><tr><th></th><th>მოთამაშე</th><th>გუნდი</th><th className="num">ა</th><th className="num">გოლი</th></tr></thead>
-                  <tbody>
-                    {PD.SCORERS.slice(0,5).map((p,i)=>{
-                      const t = PD.byId(p.team);
-                      return (
-                        <tr key={p.id} onClick={()=>go('player', p.id)}>
-                          <td className="pos">{i+1}</td>
-                          <td><div className="team">
-                            <div className="pcrest sm" style={{background:t.color}}>{p.no}</div>
-                            {p.name}
-                          </div></td>
-                          <td><PCrest team={t} size="sm" /></td>
-                          <td className="num">{p.assists}</td>
-                          <td className="num" style={{fontSize:16}}>{p.goals}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
-
-      <section className="pub-section">
-        <div className="pub-container">
-          <div className="pub-section-head">
-            <div><span className="pub-section-eyebrow">ახალი ამბები</span>
-            <h2 className="pub-section-title">სათაური დღეს</h2></div>
-            <a className="pub-link" onClick={()=>go('news')}>ყველა →</a>
-          </div>
-          <div className="news-grid">
-            {NEWS.map((n,i) => (
-              <article key={n.id} className={`news-card ${i===0?'featured':''}`} onClick={()=>go('article', n.id)}>
-                <div className="news-thumb">
-                  <span className="news-tag">{n.tag}</span>
-                  <div className="news-thumb-bg" style={{background: n.img}} />
-                </div>
-                <div className="news-body">
-                  <div className="news-meta">{n.date} · {n.author}</div>
-                  <h3 className="news-title">{n.title}</h3>
-                  {i===0 && <p className="news-excerpt">{n.excerpt}</p>}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div>
     </>
   );
 }
