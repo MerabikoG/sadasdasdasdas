@@ -1255,6 +1255,32 @@ img { display: block; max-width: 100%; }
 .pub-footer-bottom { padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-3); font-family: var(--ff-mono); letter-spacing: .04em; }
 @media (max-width: 700px) { .pub-footer-bottom { flex-direction: column; gap: 8px; } }
 
+/* ── FormPills (shared with admin dashboard) ── */
+.form {
+  display: inline-flex;
+  gap: 2px;
+}
+.form-cell {
+  width: 14px; height: 14px;
+  border-radius: var(--r-xs);
+  display: grid;
+  place-items: center;
+  font-family: var(--ff-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+}
+.form-cell.W { background: var(--success); }
+.form-cell.D { background: var(--text-4); }
+.form-cell.L { background: var(--danger); }
+
+/* ── Responsive helpers for inline-grid layouts ── */
+@media (max-width: 980px) {
+  .home-2col { grid-template-columns: 1fr !important; }
+  .tickets-layout { grid-template-columns: 1fr !important; }
+  .tickets-layout > div[style*="sticky"] { position: static !important; }
+}
+
 /* admin link badge */
 .admin-link {
   display: inline-flex;
