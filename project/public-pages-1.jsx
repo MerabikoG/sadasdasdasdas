@@ -55,114 +55,157 @@ function Footer() {
   );
 }
 
-// ── Home (League Hub) ──
+// ── Home ──
 function HomePage({ go }) {
+  const [activeTab, setActiveTab] = pS('all');
+  const live    = PD.FIXTURES.find(f => f.status === 'live');
+  const liveH   = live && PD.byId(live.home);
+  const liveA   = live && PD.byId(live.away);
   const round18 = PD.FIXTURES.filter(f => f.round === 18);
+  const liveMs  = round18.filter(f => f.status === 'live');
+  const pastMs  = round18.filter(f => f.status === 'finished');
+  const nextMs  = round18.filter(f => f.status === 'scheduled');
+
+  const TABS = [
+    { id:'all',      label:'ყველა',  color: null },
+    { id:'regional', label:'რეგ',    color:'#e8336d' },
+    { id:'u19',      label:'U19',    color:'#f5a524' },
+    { id:'u17',      label:'U17',    color:'#2dd4a4' },
+    { id:'bronze',   label:'ბრინ',   color:'#cd7f32' },
+    { id:'u15',      label:'U15',    color:'#a855f7' },
+  ];
 
   const COMPS = [
-    {
-      id: 'regional', name: 'რეგიონული ლიგა', color: '#e8336d',
-      flat: ['ა ჯგუფი', 'ბ ჯგუფი', 'გ ჯგუფი'],
-    },
-    {
-      id: 'u19', name: '19-წლამდე ლიგა', color: '#f5a524', badge: 'U19',
-      tiers: [
-        { name: 'ოქროს ლიგა',    color: '#f5a524', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-        { name: 'ვერცხლის ლიგა', color: '#9ca3af', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-      ],
-    },
-    {
-      id: 'u17', name: '17-წლამდე ლიგა', color: '#2dd4a4', badge: 'U17',
-      tiers: [
-        { name: 'ოქროს ლიგა',    color: '#f5a524', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-        { name: 'ვერცხლის ლიგა', color: '#9ca3af', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-      ],
-    },
-    {
-      id: 'bronze', name: 'ბრინჯაოს ლიგა', color: '#cd7f32',
-      flat: ['ა ჯგუფი', 'ბ ჯგუფი', 'გ ჯგუფი', 'ზედა ჯგუფი', 'ქვედა ჯგუფი'],
-    },
-    {
-      id: 'u15', name: '15-წლამდე ლიგა', color: '#a855f7', badge: 'U15',
-      tiers: [
-        { name: 'ოქროს ლიგა',    color: '#f5a524', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-        { name: 'ვერცხლის ლიგა', color: '#9ca3af', subs: ['ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-        { name: 'ბრინჯაოს ლიგა', color: '#cd7f32', subs: ['ა ჯგუფი', 'ბ ჯგუფი', 'გ ჯგუფი', 'ზედა ჯგუფი', 'ქვედა ჯგუფი'] },
-      ],
-    },
+    { id:'regional', name:'რეგიონული ლიგა',   color:'#e8336d', flat:['ა ჯგუფი','ბ ჯგუფი','გ ჯგუფი'] },
+    { id:'u19',      name:'19-წლამდე ლიგა',   color:'#f5a524', badge:'U19',
+      tiers:[{ name:'ოქროს ლიგა',    color:'#f5a524', subs:['ზედა ჯგუფი','ქვედა ჯგუფი'] },
+             { name:'ვერცხლის ლიგა', color:'#9ca3af', subs:['ზედა ჯგუფი','ქვედა ჯგუფი'] }] },
+    { id:'u17',      name:'17-წლამდე ლიგა',   color:'#2dd4a4', badge:'U17',
+      tiers:[{ name:'ოქროს ლიგა',    color:'#f5a524', subs:['ზედა ჯგუფი','ქვედა ჯგუფი'] },
+             { name:'ვერცხლის ლიგა', color:'#9ca3af', subs:['ზედა ჯგუფი','ქვედა ჯგუფი'] }] },
+    { id:'bronze',   name:'ბრინჯაოს ლიგა',   color:'#cd7f32', flat:['ა ჯგუფი','ბ ჯგუფი','გ ჯგუფი','ზედა ჯგუფი','ქვედა ჯგუფი'] },
+    { id:'u15',      name:'15-წლამდე ლიგა',   color:'#a855f7', badge:'U15',
+      tiers:[{ name:'ოქროს ლიგა',    color:'#f5a524', subs:['ზედა ჯგუფი','ქვედა ჯგუფი'] },
+             { name:'ვერცხლის ლიგა', color:'#9ca3af', subs:['ზედა ჯგუფი','ქვედა ჯგუფი'] },
+             { name:'ბრინჯაოს ლიგა', color:'#cd7f32', subs:['ა ჯგუფი','ბ ჯგუფი','გ ჯგუფი','ზედა ჯგუფი','ქვედა ჯგუფი'] }] },
   ];
 
   const Chev = () => (
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-      <path d="m9 18 6-6-6-6"/>
-    </svg>
+      <path d="m9 18 6-6-6-6"/></svg>
   );
-
   const leagueGo = (comp, tier, group) => go('league', {
     name: group || (tier ? tier.name : comp.name),
-    compName: comp.name,
-    tierName: tier ? tier.name : null,
+    compName: comp.name, tierName: tier ? tier.name : null,
     color: tier ? tier.color : comp.color,
   });
 
+  const McCard = ({ f }) => {
+    const h = PD.byId(f.home), a = PD.byId(f.away);
+    const isLive = f.status === 'live', isDone = f.status === 'finished';
+    return (
+      <div className="mc-card" onClick={()=>go('match')}>
+        <div className="mc-team"><div className="mc-crest" style={{background:h.color}}>{h.short}</div><span className="mc-name">{h.name}</span><span className="mc-score">{isDone||isLive?f.hs:'–'}</span></div>
+        <div className="mc-team"><div className="mc-crest" style={{background:a.color}}>{a.short}</div><span className="mc-name">{a.name}</span><span className="mc-score">{isDone||isLive?f.as:'–'}</span></div>
+        <div className="mc-foot">
+          <span className={`mc-status${isLive?' live':''}`}>{isLive?'● LIVE':isDone?'FT':f.time}</span>
+          {isLive && <span className="mc-min">{f.minute}'</span>}
+          {f.lt && <span className="mc-ltag" style={{color:f.lt.c}}><span style={{background:f.lt.c,width:5,height:5,borderRadius:'50%',display:'inline-block',marginRight:4}}/>}{f.lt.l}</span>}
+        </div>
+      </div>
+    );
+  };
+
+  const McSection = ({ title, matches, isLive: live }) => matches.length === 0 ? null : (
+    <div className="mc-section">
+      <h3 className="mc-section-title">
+        {live && <span className="live-pill" style={{fontSize:9,padding:'2px 5px',marginRight:6}}>LIVE</span>}
+        {title}
+      </h3>
+      <div className="mc-scroll">
+        {matches.map(f => <McCard key={f.id} f={f} />)}
+      </div>
+    </div>
+  );
+
+  const activeTabData = TABS.find(t => t.id === activeTab);
+
   return (
     <>
-      <section className="hero">
-        <div className="pub-container">
-          <div className="hero-inner">
-            <div>
-              <span className="pub-section-eyebrow">სეზონი 2025/26 · ყველა ლიგა</span>
-              <h1 className="hero-headline">ეროვნული<br /><em>ლიგა</em></h1>
-              <p className="hero-sub">ყველა მატჩი, ყველა ლიგა, ყველა ემოცია — ერთ ადგილას.</p>
-              <div className="hero-cta">
-                <button className="pub-btn primary lg" onClick={()=>go('tickets')}>ბილეთი</button>
-                <button className="pub-btn ghost lg" onClick={()=>go('match')}>● ლაივი</button>
-              </div>
-            </div>
+      {/* ── Cinematic Hero ── */}
+      <section className="cine-hero">
+        <div className="cine-bg">
+          {liveH && <div className="cine-glow home" style={{background: liveH.color}} />}
+          {liveA && <div className="cine-glow away" style={{background: liveA.color}} />}
+          <div className="cine-grid" />
+          <div className="cine-vignette" />
+        </div>
 
-            <div className="hero-matches-panel">
-              <div className="hero-matches-head">
-                <span>ტური 18</span>
-                <button onClick={()=>go('match')} style={{background:'none',border:'none',cursor:'pointer',fontSize:12,color:'var(--accent)',fontFamily:'var(--ff)'}}>ყველა →</button>
-              </div>
-              {round18.map(f => {
-                const h = PD.byId(f.home), a = PD.byId(f.away);
-                const isLive = f.status === 'live';
-                const isDone = f.status === 'finished';
-                return (
-                  <div key={f.id} className={`hero-match-row${isLive?' is-live':''}`} onClick={()=>go('match')}>
-                    <div className="hmr-status">
-                      {isLive ? <span className="live-pill">{f.minute}'</span>
-                              : isDone ? <span style={{color:'var(--text-4)',fontSize:10,fontFamily:'var(--ff-mono)',fontWeight:700}}>FT</span>
-                              : <span style={{color:'var(--text-3)',fontSize:11,fontFamily:'var(--ff-mono)'}}>{f.time}</span>}
-                    </div>
-                    <div className="hmr-body">
-                      <div className="hmr-teams">
-                        <span className="hmr-team">
-                          <div className="pcrest sm" style={{background:h.color,flexShrink:0}}>{h.short}</div>
-                          <span className="hmr-tname">{h.short}</span>
-                        </span>
-                        <span className="hmr-score">{isDone||isLive ? `${f.hs}:${f.as}` : '–:–'}</span>
-                        <span className="hmr-team right">
-                          <span className="hmr-tname">{a.short}</span>
-                          <div className="pcrest sm" style={{background:a.color,flexShrink:0}}>{a.short}</div>
-                        </span>
-                      </div>
-                      {f.lt && (
-                        <div className="hmr-league" style={{color: f.lt.c}}>
-                          <span className="hmr-league-dot" style={{background: f.lt.c}} />
-                          {f.lt.l}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+        <div className="pub-container cine-content">
+          {/* League tabs */}
+          <div className="cine-tabs">
+            {TABS.map(t => {
+              const isActive = activeTab === t.id;
+              return (
+                <button key={t.id} className={`cine-tab${isActive?' active':''}`}
+                  style={isActive && t.color ? {background: t.color, borderColor: t.color, color:'#fff'} : isActive ? {} : {}}
+                  onClick={() => setActiveTab(t.id)}>
+                  {t.label}
+                </button>
+              );
+            })}
           </div>
+
+          {/* Featured live match */}
+          {live ? (
+            <div className="cine-featured">
+              <div className="cine-badge-row">
+                <span className="live-pill">LIVE</span>
+                <span className="cine-badge-meta">{live.minute}' · {live.stadium}</span>
+              </div>
+              <div className="cine-match-row">
+                <div className="cine-side">
+                  <div className="cine-crest" style={{background: liveH.color}}>{liveH.short}</div>
+                  <span className="cine-tname">{liveH.name}</span>
+                </div>
+                <div className="cine-score-box">
+                  <span className="cine-score">{live.hs}</span>
+                  <span className="cine-sep">:</span>
+                  <span className="cine-score">{live.as}</span>
+                </div>
+                <div className="cine-side right">
+                  <span className="cine-tname">{liveA.name}</span>
+                  <div className="cine-crest" style={{background: liveA.color}}>{liveA.short}</div>
+                </div>
+              </div>
+              <div className="cine-cta">
+                <button className="pub-btn primary lg" onClick={()=>go('match')}>● ლაივი</button>
+                <button className="pub-btn ghost lg" onClick={()=>go('tickets')}>ბილეთი</button>
+              </div>
+            </div>
+          ) : (
+            <div className="cine-featured">
+              <span className="pub-section-eyebrow">სეზონი 2025/26{activeTabData?.label !== 'ყველა' ? ` · ${activeTabData?.label}` : ''}</span>
+              <h1 className="cine-headline">ეროვნული<em>ლიგა</em></h1>
+              <div className="cine-cta">
+                <button className="pub-btn primary lg" onClick={()=>go('tickets')}>ბილეთი</button>
+                <button className="pub-btn ghost lg" onClick={()=>go('match')}>მატჩები →</button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
+      {/* ── Match cards ── */}
+      <div className="mc-wrapper">
+        <div className="pub-container">
+          <McSection title="Live Matches" matches={liveMs} isLive={true} />
+          <McSection title="Past Matches" matches={pastMs} />
+          <McSection title="Upcoming" matches={nextMs} />
+        </div>
+      </div>
+
+      {/* ── League Hub ── */}
       <div className="pub-container hub-body">
         <div className="pub-section-head" style={{marginBottom:20}}>
           <div>
@@ -179,19 +222,18 @@ function HomePage({ go }) {
               </div>
               <div className="hub-card-body">
                 {comp.flat && comp.flat.map(g => (
-                  <button key={g} className="hub-row" onClick={()=>leagueGo(comp, null, g)}>
+                  <button key={g} className="hub-row" onClick={()=>leagueGo(comp,null,g)}>
                     <span>{g}</span><Chev />
                   </button>
                 ))}
                 {comp.tiers && comp.tiers.map(tier => (
                   <div key={tier.name} className="hub-tier-block">
-                    <button className="hub-tier-head" style={{color: tier.color}} onClick={()=>leagueGo(comp, tier, null)}>
-                      <span className="hub-tier-dot" style={{background: tier.color}} />
-                      <span>{tier.name}</span>
-                      <Chev />
+                    <button className="hub-tier-head" style={{color:tier.color}} onClick={()=>leagueGo(comp,tier,null)}>
+                      <span className="hub-tier-dot" style={{background:tier.color}} />
+                      <span>{tier.name}</span><Chev />
                     </button>
                     {tier.subs.map(g => (
-                      <button key={g} className="hub-sub-row" onClick={()=>leagueGo(comp, tier, g)}>
+                      <button key={g} className="hub-sub-row" onClick={()=>leagueGo(comp,tier,g)}>
                         <span>{g}</span><Chev />
                       </button>
                     ))}
