@@ -57,6 +57,8 @@ function Footer() {
 
 // ── Home (League Hub) ──
 function HomePage({ go }) {
+  const round18 = PD.FIXTURES.filter(f => f.round === 18);
+
   const COMPS = [
     {
       id: 'regional', name: 'რეგიონული ლიგა', color: '#e8336d',
@@ -96,16 +98,70 @@ function HomePage({ go }) {
     </svg>
   );
 
+  const leagueGo = (comp, tier, group) => go('league', {
+    name: group || (tier ? tier.name : comp.name),
+    compName: comp.name,
+    tierName: tier ? tier.name : null,
+    color: tier ? tier.color : comp.color,
+  });
+
   return (
     <>
-      <section className="hub-hero">
+      <section className="hero">
         <div className="pub-container">
-          <span className="pub-section-eyebrow">სეზონი 2025/26 · ყველა შეჯიბრება</span>
-          <h1 className="hub-title">ლიგები</h1>
+          <div className="hero-inner">
+            <div>
+              <span className="pub-section-eyebrow">სეზონი 2025/26 · ყველა ლიგა</span>
+              <h1 className="hero-headline">ეროვნული<br /><em>ლიგა</em></h1>
+              <p className="hero-sub">ყველა მატჩი, ყველა ლიგა, ყველა ემოცია — ერთ ადგილას.</p>
+              <div className="hero-cta">
+                <button className="pub-btn primary lg" onClick={()=>go('tickets')}>ბილეთი</button>
+                <button className="pub-btn ghost lg" onClick={()=>go('match')}>● ლაივი</button>
+              </div>
+            </div>
+
+            <div className="hero-matches-panel">
+              <div className="hero-matches-head">
+                <span>ტური 18</span>
+                <button onClick={()=>go('match')} style={{background:'none',border:'none',cursor:'pointer',fontSize:12,color:'var(--accent)',fontFamily:'var(--ff)'}}>ყველა →</button>
+              </div>
+              {round18.map(f => {
+                const h = PD.byId(f.home), a = PD.byId(f.away);
+                const isLive = f.status === 'live';
+                const isDone = f.status === 'finished';
+                return (
+                  <div key={f.id} className={`hero-match-row${isLive?' is-live':''}`} onClick={()=>go('match')}>
+                    <div className="hmr-status">
+                      {isLive ? <span className="live-pill">{f.minute}'</span>
+                              : isDone ? <span style={{color:'var(--text-4)',fontSize:10,fontFamily:'var(--ff-mono)',fontWeight:700}}>FT</span>
+                              : <span style={{color:'var(--text-3)',fontSize:11,fontFamily:'var(--ff-mono)'}}>{f.time}</span>}
+                    </div>
+                    <div className="hmr-teams">
+                      <span className="hmr-team">
+                        <div className="pcrest sm" style={{background:h.color,flexShrink:0}}>{h.short}</div>
+                        <span className="hmr-tname">{h.short}</span>
+                      </span>
+                      <span className="hmr-score">{isDone||isLive ? `${f.hs}:${f.as}` : '–:–'}</span>
+                      <span className="hmr-team right">
+                        <span className="hmr-tname">{a.short}</span>
+                        <div className="pcrest sm" style={{background:a.color,flexShrink:0}}>{a.short}</div>
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
       <div className="pub-container hub-body">
+        <div className="pub-section-head" style={{marginBottom:20}}>
+          <div>
+            <span className="pub-section-eyebrow">2025/26</span>
+            <h2 className="pub-section-title">ყველა ლიგა</h2>
+          </div>
+        </div>
         <div className="hub-grid">
           {COMPS.map(comp => (
             <div key={comp.id} className="hub-card" style={{'--cc': comp.color}}>
@@ -115,19 +171,19 @@ function HomePage({ go }) {
               </div>
               <div className="hub-card-body">
                 {comp.flat && comp.flat.map(g => (
-                  <button key={g} className="hub-row" onClick={()=>{}}>
+                  <button key={g} className="hub-row" onClick={()=>leagueGo(comp, null, g)}>
                     <span>{g}</span><Chev />
                   </button>
                 ))}
                 {comp.tiers && comp.tiers.map(tier => (
                   <div key={tier.name} className="hub-tier-block">
-                    <button className="hub-tier-head" style={{color: tier.color}} onClick={()=>{}}>
+                    <button className="hub-tier-head" style={{color: tier.color}} onClick={()=>leagueGo(comp, tier, null)}>
                       <span className="hub-tier-dot" style={{background: tier.color}} />
                       <span>{tier.name}</span>
                       <Chev />
                     </button>
                     {tier.subs.map(g => (
-                      <button key={g} className="hub-sub-row" onClick={()=>{}}>
+                      <button key={g} className="hub-sub-row" onClick={()=>leagueGo(comp, tier, g)}>
                         <span>{g}</span><Chev />
                       </button>
                     ))}
@@ -137,6 +193,180 @@ function HomePage({ go }) {
             </div>
           ))}
         </div>
+      </div>
+    </>
+  );
+}
+
+// ── League Page ──
+function LeaguePage({ league, go }) {
+  const [season, setSeason] = pS(PD.SEASONS[0]);
+  const [tab, setTab] = pS('table');
+  const SD = PD.forSeason(season);
+  const standings = [...SD.STANDINGS].sort((a, b) => b.pts - a.pts);
+  const fixtures  = SD.FIXTURES.filter(f => f.status !== 'finished');
+  const results   = [...SD.FIXTURES.filter(f => f.status === 'finished')].reverse();
+
+  const TABS = [
+    { id: 'table',    label: 'ცხრილი' },
+    { id: 'fixtures', label: 'განრიგი' },
+    { id: 'results',  label: 'შედეგები' },
+    { id: 'scorers',  label: 'ბომბარდირები' },
+  ];
+
+  const MRow = ({ f }) => {
+    const h = PD.byId(f.home), a = PD.byId(f.away);
+    if (!h || !a) return null;
+    const isLive = f.status === 'live';
+    const isDone = f.status === 'finished';
+    return (
+      <div className="league-match-row" onClick={() => go('match')}>
+        <div className="lmr-date">
+          {isDone || isLive
+            ? new Date(f.date).toLocaleDateString('ka-GE', {day:'numeric', month:'short'})
+            : f.time}
+        </div>
+        <div className="lmr-teams">
+          <span className="lmr-team"><PCrest team={h} size="sm" />{h.name}</span>
+          <span className="lmr-score">
+            {isLive ? <span className="live-pill">{f.minute}'</span>
+                    : isDone ? `${f.hs} : ${f.as}` : 'vs'}
+          </span>
+          <span className="lmr-team right">{a.name}<PCrest team={a} size="sm" /></span>
+        </div>
+        <div className="lmr-meta">{f.stadium}</div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <section className="league-hero">
+        <div className="pub-container">
+          <button className="league-back" onClick={() => go('home')}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="m15 18-6-6 6-6"/></svg>
+            ყველა ლიგა
+          </button>
+          <div className="league-hero-inner">
+            <div>
+              <span className="pub-section-eyebrow" style={{color: league.color}}>
+                {league.compName}{league.tierName ? ` · ${league.tierName}` : ''}
+              </span>
+              <h1 className="league-title">{league.name}</h1>
+            </div>
+            <div className="season-selector">
+              {PD.SEASONS.map(s => (
+                <button key={s}
+                  className={`season-btn${season === s ? ' active' : ''}`}
+                  style={season === s ? {background: league.color, borderColor: league.color, color:'#fff'} : {}}
+                  onClick={() => { setSeason(s); setTab('table'); }}>
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="league-tab-bar">
+            {TABS.map(t => (
+              <button key={t.id}
+                className={`league-tab${tab === t.id ? ' active' : ''}`}
+                style={tab === t.id ? {color: league.color, borderBottomColor: league.color} : {}}
+                onClick={() => setTab(t.id)}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="pub-container" style={{paddingTop:24, paddingBottom:64}}>
+        {tab === 'table' && (
+          <table className="pub-table league-full-table">
+            <thead>
+              <tr>
+                <th>#</th><th>გუნდი</th>
+                <th className="num" title="მატჩები">მ</th>
+                <th className="num" title="მოგება">მ</th>
+                <th className="num" title="ფრე">ფ</th>
+                <th className="num" title="წაგება">წ</th>
+                <th className="num" title="გოლ-სხვაობა">გ±</th>
+                <th className="num" title="ქულები">ქ</th>
+                <th>ფორმა</th>
+              </tr>
+            </thead>
+            <tbody>
+              {standings.map((s, i) => {
+                const t = PD.byId(s.team);
+                if (!t) return null;
+                return (
+                  <tr key={s.team} style={{cursor:'pointer'}} onClick={() => go('team', s.team)}>
+                    <td className="pos">{i + 1}</td>
+                    <td><div className="team"><PCrest team={t} size="sm" />{t.name}</div></td>
+                    <td className="num">{s.p}</td>
+                    <td className="num">{s.w}</td>
+                    <td className="num">{s.d}</td>
+                    <td className="num">{s.l}</td>
+                    <td className="num" style={{color: s.gd >= 0 ? 'var(--success)' : 'var(--danger)'}}>
+                      {s.gd > 0 ? '+' : ''}{s.gd}
+                    </td>
+                    <td className="num" style={{fontWeight:700, fontSize:15}}>{s.pts}</td>
+                    <td><FormPills form={s.form} /></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+
+        {tab === 'fixtures' && (
+          <div className="league-matches">
+            {fixtures.length === 0
+              ? <p className="league-empty">დაგეგმილი მატჩი არ არის</p>
+              : fixtures.map(f => <MRow key={f.id} f={f} />)}
+          </div>
+        )}
+
+        {tab === 'results' && (
+          <div className="league-matches">
+            {results.length === 0
+              ? <p className="league-empty">შედეგები არ არის</p>
+              : results.map(f => <MRow key={f.id} f={f} />)}
+          </div>
+        )}
+
+        {tab === 'scorers' && (
+          <table className="pub-table league-full-table">
+            <thead>
+              <tr>
+                <th>#</th><th>მოთამაშე</th><th>გუნდი</th>
+                <th className="num" title="მატჩები">მ</th>
+                <th className="num" title="ასისტი">ა</th>
+                <th className="num" title="გოლი">გოლი</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SD.SCORERS.map((p, i) => {
+                const t = PD.byId(p.team);
+                if (!t) return null;
+                return (
+                  <tr key={p.id} style={{cursor: season==='2025/26'?'pointer':'default'}}
+                      onClick={() => season === '2025/26' && go('player', p.id)}>
+                    <td className="pos">{i + 1}</td>
+                    <td>
+                      <div className="team">
+                        <div className="pcrest sm" style={{background:t.color,flexShrink:0}}>{p.no}</div>
+                        {p.name}
+                      </div>
+                    </td>
+                    <td><div className="team"><PCrest team={t} size="sm" />{t.short}</div></td>
+                    <td className="num">{p.apps}</td>
+                    <td className="num">{p.assists}</td>
+                    <td className="num" style={{fontWeight:700, fontSize:15}}>{p.goals}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </>
   );
@@ -249,8 +479,9 @@ function MatchPage({ go }) {
   );
 }
 
-window.PubHomePage = HomePage;
-window.PubMatchPage = MatchPage;
-window.PubFooter = Footer;
-window.PCrest = PCrest;
-window.NEWS = NEWS;
+window.PubHomePage   = HomePage;
+window.PubLeaguePage = LeaguePage;
+window.PubMatchPage  = MatchPage;
+window.PubFooter     = Footer;
+window.PCrest        = PCrest;
+window.NEWS          = NEWS;

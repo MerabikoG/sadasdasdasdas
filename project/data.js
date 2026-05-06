@@ -99,5 +99,91 @@ window.LIGA_DATA = (function() {
     return { team: s.team, pts };
   });
 
-  return { TEAMS, STANDINGS, FIXTURES, SCORERS, LIVE_EVENTS, seasonChart, byId: (id) => TEAMS.find(t => t.id === id) };
+  const SEASONS = ['2025/26', '2024/25', '2023/24'];
+
+  // 2024/25 — Torpedo champions
+  const HIST2425 = {
+    STANDINGS: [
+      { team:'tor',     p:34, w:22, d:6, l:6,  gf:68, ga:32, form:['W','W','L','W','W'] },
+      { team:'din',     p:34, w:20, d:7, l:7,  gf:62, ga:31, form:['D','W','W','W','L'] },
+      { team:'sab',     p:34, w:18, d:8, l:8,  gf:58, ga:38, form:['W','W','D','W','W'] },
+      { team:'din-bat', p:34, w:16, d:8, l:10, gf:48, ga:39, form:['L','W','D','W','W'] },
+      { team:'lok',     p:34, w:14, d:8, l:12, gf:44, ga:41, form:['W','D','L','W','D'] },
+      { team:'gag',     p:34, w:12, d:9, l:13, gf:40, ga:46, form:['L','W','W','L','D'] },
+      { team:'tel',     p:34, w:11, d:7, l:16, gf:36, ga:50, form:['D','L','W','L','W'] },
+      { team:'sam',     p:34, w:9,  d:7, l:18, gf:31, ga:54, form:['L','L','D','W','L'] },
+      { team:'kol',     p:34, w:6,  d:8, l:20, gf:28, ga:62, form:['D','L','L','D','L'] },
+      { team:'shu',     p:34, w:4,  d:6, l:24, gf:22, ga:74, form:['L','L','L','L','D'] },
+    ].map(s => ({ ...s, pts: s.w*3+s.d, gd: s.gf-s.ga })),
+    FIXTURES: [
+      { id:'h25-r1-1',  round:1,  date:'2025-09-06', time:'17:00', home:'tor',     away:'din',     hs:2, as:1, status:'finished', stadium:'რამაზ შენგელია' },
+      { id:'h25-r1-2',  round:1,  date:'2025-09-06', time:'19:30', home:'sab',     away:'lok',     hs:3, as:0, status:'finished', stadium:'მიხეილ მესხი' },
+      { id:'h25-r1-3',  round:1,  date:'2025-09-07', time:'17:00', home:'gag',     away:'tel',     hs:1, as:1, status:'finished', stadium:'მიხეილ მესხი' },
+      { id:'h25-r1-4',  round:1,  date:'2025-09-07', time:'19:30', home:'din-bat', away:'kol',     hs:2, as:0, status:'finished', stadium:'ბათუმის არენა' },
+      { id:'h25-r1-5',  round:1,  date:'2025-09-08', time:'19:00', home:'shu',     away:'sam',     hs:0, as:1, status:'finished', stadium:'ცხაკაია არენა' },
+      { id:'h25-r34-1', round:34, date:'2026-04-12', time:'17:00', home:'din',     away:'sab',     hs:1, as:2, status:'finished', stadium:'ბორის პაიჭაძე' },
+      { id:'h25-r34-2', round:34, date:'2026-04-12', time:'19:30', home:'tor',     away:'lok',     hs:3, as:1, status:'finished', stadium:'რამაზ შენგელია' },
+      { id:'h25-r34-3', round:34, date:'2026-04-13', time:'17:00', home:'gag',     away:'din-bat', hs:2, as:2, status:'finished', stadium:'მიხეილ მესხი' },
+      { id:'h25-r34-4', round:34, date:'2026-04-13', time:'19:30', home:'tel',     away:'shu',     hs:2, as:0, status:'finished', stadium:'თემურ სტეფანია' },
+      { id:'h25-r34-5', round:34, date:'2026-04-14', time:'19:00', home:'sam',     away:'kol',     hs:1, as:1, status:'finished', stadium:'ერისთავი' },
+    ],
+    SCORERS: [
+      { id:'hs1', name:'ლუკა ლოჩოშვილი',    team:'tor',     pos:'F', no:7,  age:23, goals:23, assists:8,  apps:34, mins:3060, yellow:5, red:0, shots:72, accuracy:63 },
+      { id:'hs2', name:'გიორგი ჭაკვეტაძე',   team:'din',     pos:'F', no:9,  age:25, goals:18, assists:11, apps:32, mins:2790, yellow:3, red:0, shots:61, accuracy:59 },
+      { id:'hs3', name:'ხვიჩა კვარაცხელია',  team:'sab',     pos:'M', no:11, age:24, goals:15, assists:13, apps:34, mins:3060, yellow:4, red:0, shots:54, accuracy:57 },
+      { id:'hs4', name:'ბუდუ ზივზივაძე',     team:'din-bat', pos:'F', no:19, age:30, goals:14, assists:5,  apps:30, mins:2580, yellow:2, red:0, shots:48, accuracy:54 },
+      { id:'hs5', name:'ოთარ ყიფიანი',       team:'lok',     pos:'F', no:21, age:21, goals:12, assists:4,  apps:28, mins:2240, yellow:2, red:0, shots:41, accuracy:51 },
+      { id:'hs6', name:'სანდრო ალთუნაშვილი', team:'tor',     pos:'M', no:6,  age:27, goals:10, assists:14, apps:34, mins:3060, yellow:8, red:1, shots:33, accuracy:45 },
+      { id:'hs7', name:'ნოდარ ყავთარაძე',    team:'gag',     pos:'F', no:17, age:28, goals:9,  assists:5,  apps:31, mins:2580, yellow:4, red:0, shots:36, accuracy:42 },
+      { id:'hs8', name:'მირიან გვარდიოლა',   team:'sam',     pos:'F', no:9,  age:25, goals:8,  assists:2,  apps:28, mins:2180, yellow:3, red:0, shots:31, accuracy:39 },
+    ],
+  };
+
+  // 2023/24 — Saburtalo champions
+  const HIST2324 = {
+    STANDINGS: [
+      { team:'sab',     p:34, w:24, d:5, l:5,  gf:74, ga:28, form:['W','W','W','D','W'] },
+      { team:'din',     p:34, w:21, d:6, l:7,  gf:65, ga:34, form:['W','W','D','W','W'] },
+      { team:'tor',     p:34, w:17, d:8, l:9,  gf:54, ga:38, form:['D','W','W','L','W'] },
+      { team:'lok',     p:34, w:15, d:6, l:13, gf:48, ga:43, form:['W','L','W','W','D'] },
+      { team:'din-bat', p:34, w:14, d:7, l:13, gf:44, ga:46, form:['D','W','L','W','L'] },
+      { team:'gag',     p:34, w:11, d:9, l:14, gf:38, ga:48, form:['L','D','W','W','L'] },
+      { team:'tel',     p:34, w:10, d:8, l:16, gf:34, ga:52, form:['W','L','D','L','W'] },
+      { team:'kol',     p:34, w:8,  d:7, l:19, gf:30, ga:58, form:['L','D','L','W','L'] },
+      { team:'sam',     p:34, w:6,  d:6, l:22, gf:26, ga:64, form:['L','L','D','L','D'] },
+      { team:'shu',     p:34, w:3,  d:6, l:25, gf:18, ga:78, form:['L','L','L','D','L'] },
+    ].map(s => ({ ...s, pts: s.w*3+s.d, gd: s.gf-s.ga })),
+    FIXTURES: [
+      { id:'h24-r1-1',  round:1,  date:'2024-09-07', time:'17:00', home:'sab',     away:'din',  hs:3, as:1, status:'finished', stadium:'მიხეილ მესხი' },
+      { id:'h24-r1-2',  round:1,  date:'2024-09-07', time:'19:30', home:'tor',     away:'lok',  hs:2, as:2, status:'finished', stadium:'რამაზ შენგელია' },
+      { id:'h24-r1-3',  round:1,  date:'2024-09-08', time:'17:00', home:'din-bat', away:'tel',  hs:1, as:0, status:'finished', stadium:'ბათუმის არენა' },
+      { id:'h24-r1-4',  round:1,  date:'2024-09-08', time:'19:30', home:'gag',     away:'kol',  hs:2, as:1, status:'finished', stadium:'მიხეილ მესხი' },
+      { id:'h24-r1-5',  round:1,  date:'2024-09-09', time:'19:00', home:'sam',     away:'shu',  hs:2, as:0, status:'finished', stadium:'ერისთავი' },
+      { id:'h24-r34-1', round:34, date:'2025-04-13', time:'17:00', home:'din',     away:'tor',  hs:0, as:1, status:'finished', stadium:'ბორის პაიჭაძე' },
+      { id:'h24-r34-2', round:34, date:'2025-04-13', time:'19:30', home:'sab',     away:'lok',  hs:4, as:1, status:'finished', stadium:'მიხეილ მესხი' },
+      { id:'h24-r34-3', round:34, date:'2025-04-14', time:'17:00', home:'din-bat', away:'sam',  hs:3, as:0, status:'finished', stadium:'ბათუმის არენა' },
+      { id:'h24-r34-4', round:34, date:'2025-04-14', time:'19:30', home:'tel',     away:'gag',  hs:1, as:2, status:'finished', stadium:'თემურ სტეფანია' },
+      { id:'h24-r34-5', round:34, date:'2025-04-15', time:'19:00', home:'kol',     away:'shu',  hs:2, as:1, status:'finished', stadium:'ფაზისი' },
+    ],
+    SCORERS: [
+      { id:'hh1', name:'ხვიჩა კვარაცხელია',  team:'sab',     pos:'M', no:11, age:23, goals:21, assists:16, apps:34, mins:3060, yellow:4, red:0, shots:67, accuracy:64 },
+      { id:'hh2', name:'გიორგი ჭაკვეტაძე',   team:'din',     pos:'F', no:9,  age:24, goals:17, assists:9,  apps:33, mins:2870, yellow:3, red:0, shots:58, accuracy:60 },
+      { id:'hh3', name:'ლუკა ლოჩოშვილი',    team:'tor',     pos:'F', no:7,  age:22, goals:14, assists:6,  apps:32, mins:2740, yellow:5, red:0, shots:49, accuracy:57 },
+      { id:'hh4', name:'ოთარ ყიფიანი',       team:'lok',     pos:'F', no:21, age:20, goals:13, assists:3,  apps:30, mins:2410, yellow:2, red:0, shots:44, accuracy:52 },
+      { id:'hh5', name:'ზურიკო დავითაშვილი', team:'sab',     pos:'F', no:10, age:23, goals:11, assists:8,  apps:33, mins:2810, yellow:3, red:0, shots:40, accuracy:50 },
+      { id:'hh6', name:'ბუდუ ზივზივაძე',     team:'din-bat', pos:'F', no:19, age:29, goals:10, assists:4,  apps:29, mins:2350, yellow:2, red:0, shots:37, accuracy:46 },
+      { id:'hh7', name:'ნოდარ ყავთარაძე',    team:'gag',     pos:'F', no:17, age:26, goals:9,  assists:5,  apps:32, mins:2580, yellow:5, red:0, shots:34, accuracy:44 },
+      { id:'hh8', name:'გრიგოლ ჩაბრაძე',    team:'tel',     pos:'M', no:14, age:22, goals:8,  assists:7,  apps:30, mins:2490, yellow:4, red:0, shots:29, accuracy:41 },
+    ],
+  };
+
+  const HISTORICAL = { '2024/25': HIST2425, '2023/24': HIST2324 };
+
+  return {
+    TEAMS, SEASONS, STANDINGS, FIXTURES, SCORERS, LIVE_EVENTS, seasonChart,
+    byId: (id) => TEAMS.find(t => t.id === id),
+    forSeason: (s) => s === '2025/26'
+      ? { STANDINGS, FIXTURES, SCORERS }
+      : (HISTORICAL[s] || { STANDINGS:[], FIXTURES:[], SCORERS:[] }),
+  };
 })();

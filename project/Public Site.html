@@ -36,9 +36,11 @@ function App() {
   const [playerId, setPlayerId] = useState('p1');
   const [articleId, setArticleId] = useState('n1');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [leagueData, setLeagueData] = useState(null);
 
   const go = (p, id) => {
     setPage(p);
+    if (p === 'league') setLeagueData(id);
     if (p === 'team') setTeamId(id || 'din');
     if (p === 'player') setPlayerId(id || 'p1');
     if (p === 'article') setArticleId(id || 'n1');
@@ -73,7 +75,8 @@ function App() {
         </div>
       </nav>
 
-      {page === 'home' && <PubHomePage go={go} />}
+      {page === 'home'   && <PubHomePage go={go} />}
+      {page === 'league' && <PubLeaguePage league={leagueData} go={go} />}
       {page === 'match' && <PubMatchPage go={go} />}
       {page === 'tickets' && <PubTicketsPage go={go} />}
       {page === 'team' && <PubTeamPage teamId={teamId} go={go} />}
