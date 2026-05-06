@@ -136,16 +136,24 @@ function HomePage({ go }) {
                               : isDone ? <span style={{color:'var(--text-4)',fontSize:10,fontFamily:'var(--ff-mono)',fontWeight:700}}>FT</span>
                               : <span style={{color:'var(--text-3)',fontSize:11,fontFamily:'var(--ff-mono)'}}>{f.time}</span>}
                     </div>
-                    <div className="hmr-teams">
-                      <span className="hmr-team">
-                        <div className="pcrest sm" style={{background:h.color,flexShrink:0}}>{h.short}</div>
-                        <span className="hmr-tname">{h.short}</span>
-                      </span>
-                      <span className="hmr-score">{isDone||isLive ? `${f.hs}:${f.as}` : '–:–'}</span>
-                      <span className="hmr-team right">
-                        <span className="hmr-tname">{a.short}</span>
-                        <div className="pcrest sm" style={{background:a.color,flexShrink:0}}>{a.short}</div>
-                      </span>
+                    <div className="hmr-body">
+                      <div className="hmr-teams">
+                        <span className="hmr-team">
+                          <div className="pcrest sm" style={{background:h.color,flexShrink:0}}>{h.short}</div>
+                          <span className="hmr-tname">{h.short}</span>
+                        </span>
+                        <span className="hmr-score">{isDone||isLive ? `${f.hs}:${f.as}` : '–:–'}</span>
+                        <span className="hmr-team right">
+                          <span className="hmr-tname">{a.short}</span>
+                          <div className="pcrest sm" style={{background:a.color,flexShrink:0}}>{a.short}</div>
+                        </span>
+                      </div>
+                      {f.lt && (
+                        <div className="hmr-league" style={{color: f.lt.c}}>
+                          <span className="hmr-league-dot" style={{background: f.lt.c}} />
+                          {f.lt.l}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -280,7 +288,7 @@ function LeaguePage({ league, go }) {
 
       <div className="pub-container" style={{paddingTop:24, paddingBottom:64}}>
         {tab === 'table' && (
-          <table className="pub-table league-full-table">
+          <table className="league-table">
             <thead>
               <tr>
                 <th>#</th><th>გუნდი</th>
@@ -334,7 +342,7 @@ function LeaguePage({ league, go }) {
         )}
 
         {tab === 'scorers' && (
-          <table className="pub-table league-full-table">
+          <table className="league-table">
             <thead>
               <tr>
                 <th>#</th><th>მოთამაშე</th><th>გუნდი</th>

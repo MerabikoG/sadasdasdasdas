@@ -36,11 +36,11 @@ window.LIGA_DATA = (function() {
     { id: 'm17-4', round: 17, date: '2026-04-20', time: '19:30', home: 'din-bat', away: 'tel', hs: 2, as: 2, status: 'finished', stadium: 'ბათუმის არენა' },
     { id: 'm17-5', round: 17, date: '2026-04-21', time: '19:00', home: 'lok', away: 'gag', hs: 1, as: 1, status: 'finished', stadium: 'მიხეილ მესხი' },
     // Round 18
-    { id: 'm18-1', round: 18, date: '2026-04-26', time: '17:00', home: 'din', away: 'tor', hs: 2, as: 1, status: 'finished', stadium: 'ბორის პაიჭაძე' },
-    { id: 'm18-2', round: 18, date: '2026-04-26', time: '19:30', home: 'kol', away: 'shu', hs: 1, as: 0, status: 'finished', stadium: 'ფაზისი' },
-    { id: 'm18-3', round: 18, date: '2026-04-27', time: '19:00', home: 'sab', away: 'din-bat', hs: 1, as: 1, status: 'finished', stadium: 'მიხეილ მესხი' },
-    { id: 'm18-4', round: 18, date: '2026-04-28', time: '19:00', home: 'tel', away: 'lok', hs: 0, as: 1, status: 'live', minute: 67, stadium: 'თემურ სტეფანია' },
-    { id: 'm18-5', round: 18, date: '2026-04-28', time: '21:30', home: 'gag', away: 'sam', hs: null, as: null, status: 'scheduled', stadium: 'მიხეილ მესხი' },
+    { id: 'm18-1', round: 18, date: '2026-04-26', time: '17:00', home: 'din', away: 'tor', hs: 2, as: 1, status: 'finished', stadium: 'ბორის პაიჭაძე', lt: { c: '#e8336d', l: 'რეგ · ა ჯგ.' } },
+    { id: 'm18-2', round: 18, date: '2026-04-26', time: '19:30', home: 'kol', away: 'shu', hs: 1, as: 0, status: 'finished', stadium: 'ფაზისი',          lt: { c: '#f5a524', l: 'U19 · ოქ.' } },
+    { id: 'm18-3', round: 18, date: '2026-04-27', time: '19:00', home: 'sab', away: 'din-bat', hs: 1, as: 1, status: 'finished', stadium: 'მიხეილ მესხი', lt: { c: '#2dd4a4', l: 'U17 · ვერ.' } },
+    { id: 'm18-4', round: 18, date: '2026-04-28', time: '19:00', home: 'tel', away: 'lok', hs: 0, as: 1, status: 'live', minute: 67, stadium: 'თემურ სტეფანია', lt: { c: '#cd7f32', l: 'ბრინ.' } },
+    { id: 'm18-5', round: 18, date: '2026-04-28', time: '21:30', home: 'gag', away: 'sam', hs: null, as: null, status: 'scheduled', stadium: 'მიხეილ მესხი', lt: { c: '#a855f7', l: 'U15 · ოქ.' } },
     // Round 19
     { id: 'm19-1', round: 19, date: '2026-05-03', time: '17:00', home: 'sam', away: 'din', hs: null, as: null, status: 'scheduled', stadium: 'ერისთავი' },
     { id: 'm19-2', round: 19, date: '2026-05-03', time: '19:30', home: 'tor', away: 'sab', hs: null, as: null, status: 'scheduled', stadium: 'რამაზ შენგელია' },

@@ -1315,14 +1315,13 @@ img { display: block; max-width: 100%; }
 .hero-match-row:last-child { border-bottom: none; }
 .hero-match-row:hover { background: var(--row-hover); }
 .hero-match-row.is-live { background: rgba(255,59,92,.05); }
-.hmr-status { width: 44px; flex-shrink: 0; display: flex; justify-content: center; }
+.hmr-status { width: 44px; flex-shrink: 0; display: flex; justify-content: center; padding-top: 2px; }
+.hmr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .hmr-teams {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  min-width: 0;
 }
 .hmr-team {
   display: flex;
@@ -1342,7 +1341,66 @@ img { display: block; max-width: 100%; }
   text-align: center;
   flex-shrink: 0;
 }
+.hmr-league {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+.hmr-league-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 @media (max-width: 900px) { .hero-matches-panel { display: none; } }
+
+/* ── League Page Table (mirrors dashboard .tbl) ── */
+.league-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.league-table thead th {
+  text-align: left;
+  font-size: 10px;
+  color: var(--text-3);
+  font-family: var(--ff-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-0);
+  white-space: nowrap;
+}
+.league-table thead th.num { text-align: right; }
+.league-table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-2);
+}
+.league-table tbody td.num { text-align: right; color: var(--text-1); font-weight: 500; }
+.league-table tbody tr { transition: background var(--t-instant); cursor: pointer; }
+.league-table tbody tr:hover { background: var(--row-hover); }
+.league-table tbody tr:last-child td { border-bottom: 0; }
+.league-table .pos {
+  width: 28px;
+  text-align: center;
+  color: var(--text-3);
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  padding-left: 4px;
+}
+.league-table .team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-1);
+  font-weight: 500;
+  min-width: 0;
+}
+.league-table .num.pts { font-size: 14px; font-weight: 700; color: var(--text-1); }
 
 /* ── League Page ── */
 .league-hero {
@@ -1428,7 +1486,6 @@ img { display: block; max-width: 100%; }
 .lmr-score { font-size: 15px; font-weight: 700; font-family: var(--ff-mono); color: var(--text-1); text-align: center; }
 .lmr-meta { font-size: 11px; color: var(--text-4); width: 130px; text-align: right; flex-shrink: 0; }
 .league-empty { color: var(--text-3); text-align: center; padding: 48px 0; font-size: 14px; }
-.league-full-table .num { font-size: 13px; }
 @media (max-width: 700px) {
   .lmr-meta { display: none; }
   .lmr-date { width: 40px; }
